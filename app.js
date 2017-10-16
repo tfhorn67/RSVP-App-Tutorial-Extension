@@ -67,12 +67,17 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', (event) => {
     //prevent default so page won't refresh on submit
     event.preventDefault();
-    //store the input value and clear the field after submitted
-    const text = input.value;
-    input.value = '';
-    //populate the unordered list to hold the invitees
-    const li = createLI(text);
-    ul.appendChild(li);
+    if (input.value !== '') {
+      //store the input value and clear the field after submitted
+      const text = input.value;
+      input.value = '';
+      input.placeholder = 'Invite Someone';
+      //populate the unordered list to hold the invitees
+      const li = createLI(text);
+      ul.appendChild(li);
+    } else if (input.value === '') {
+      input.placeholder = "Oh no! There was nothing to enter. Try again?";
+    }
   });
 
   ul.addEventListener('change', (event) => {
