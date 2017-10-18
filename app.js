@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const div = document.createElement('div');
   const filterLabel = document.createElement('label');
   const filterCheckbox = document.createElement('input');
-  let inviteeNameList = '';
-  let isDuplicate;
+  let inviteeNameList = [];
+  let isDuplicate = false;
 
   //function to create new list items replete w/ invitee name, cofirmed checkbox, and edit/remove buttons
   function createLI(text) {
@@ -66,19 +66,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  //The code in the event listener below can be cleaned. Note the repetition of input.value = ... and input.placeholder = ...
+
   //use submit listener on form element instead of click on input so click or enter fires event
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     if (input.value !== '') {
-      //store the input value and clear the field after submitted
+      //store the input value
       const text = input.value;
-      isDuplicate = inviteeNameList.indexOf(text);
-      if (isDuplicate !== -1) {
+      //check if inputted name is already on the list
+      for (i = 0 ; i < inviteeNameList.length ; i++) {
+        if (text === inviteeNameList[i]) {
+          isDuplicate = true;
+        } else {
+          isDuplicate = false;
+        }
+      }
+      if (isDuplicate === true) {
         input.value = '';
         input.placeholder = "Hey, they're already on the list! Try again?";
       } else {
         //add new name to the duplicate checker list
-        inviteeNameList += text;
+        inviteeNameList.push(text);
         //store the input value and clear the field after submitted
         input.value = '';
         input.placeholder = 'Invite Someone';
@@ -86,11 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const li = createLI(text);
         ul.appendChild(li);
       }
+      //get users to try again if they attempt to submit an empty string
     } else if (input.value === '') {
       input.placeholder = "Oh no! There was nothing to enter. Try again?";
     }
-    console.log(inviteeNameList);
-    console.log(isDuplicate);
   });
 
   //make the 'confirmed' checkbox do what it says it'll do
