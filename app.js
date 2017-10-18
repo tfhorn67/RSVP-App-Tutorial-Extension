@@ -78,13 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
       for (i = 0 ; i < inviteeNameList.length ; i++) {
         if (text === inviteeNameList[i]) {
           isDuplicate = true;
-        } else {
-          isDuplicate = false;
         }
       }
       if (isDuplicate === true) {
         input.value = '';
         input.placeholder = "Hey, they're already on the list! Try again?";
+        isDuplicate = false;
       } else {
         //add new name to the duplicate checker list
         inviteeNameList.push(text);
