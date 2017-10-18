@@ -1,4 +1,4 @@
-/* ================================= 
+/* =================================
   Element Styles
 ==================================== */
 
@@ -13,7 +13,7 @@ body {
 h1,
 p,
 form button {
-  color: white;  
+  color: white;
 }
 h1 {
   font-family: 'Courgette', cursive;
@@ -62,7 +62,7 @@ ul li {
 button {
   cursor: pointer;
 }
-input, 
+input,
 button {
   border: none;
   outline: none;
@@ -71,15 +71,15 @@ header {
   text-align: center;
   background: linear-gradient(90deg, #d4eece, #55b3d0, #1e7eb7),
               url('../images/header-bg.jpg') no-repeat;
-              background-blend-mode: multiply;    
-              background-size: cover;   
+              background-blend-mode: multiply;
+              background-size: cover;
 }
 header input {
   padding: 12px;
   font-size: 1.15em;
   width: 100%;
 }
-li span, 
+li span,
 li input[type=text] {
   color: #707070;
   font-size: 1.3em;
@@ -95,7 +95,7 @@ li label {
   display: block;
   color: rgba(112, 112, 112, .55);
 }
-li span, 
+li span,
 li input[type=text]:first-child {
   display: block;
 }
@@ -138,7 +138,7 @@ div > label {
   color: rgba(88, 183, 205, 1);
 }
 
-/* ================================= 
+/* =================================
   Media Queries
 ==================================== */
 
@@ -179,8 +179,8 @@ div > label {
 @media (min-width: 769px) {
   header {
     height: 280px;
-    padding: 2.5em 1em 1em;  
-    background-position: 0 -95px; 
+    padding: 2.5em 1em 1em;
+    background-position: 0 -95px;
   }
   .main > div {
     float: right;
@@ -216,10 +216,10 @@ div > label {
     display: -webkit-flex;
     display: flex;
     clear: both;
-    
+
     -webkit-justify-content: space-between;
     justify-content: space-between;
-    -webkit-flex-wrap: wrap;    
+    -webkit-flex-wrap: wrap;
     flex-wrap: wrap;
     padding-top: 1.25em;
   }
@@ -231,7 +231,7 @@ div > label {
     margin: 0 1.25% 1em;
   }
 }
-@media (min-width: 880px) { 
+@media (min-width: 880px) {
   ul li {
     -webkit-flex-basis: 20%;
     flex-basis: 20%;

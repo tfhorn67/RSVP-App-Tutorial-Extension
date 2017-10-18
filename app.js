@@ -6,9 +6,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const ul = document.getElementById('invitedList');
 
   //Global Creations
-  const div = document.createElement('div');
-  const filterLabel = document.createElement('label');
-  const filterCheckbox = document.createElement('input');
+//CODE CLEANING: As you get around to code cleaning, maybe make a function to make all the filter divs and their content
+  const filterDiv = document.createElement('div');
+  const respondedDiv = document.createElement('div');
+  const respondedLabel = document.createElement('label');
+  const respondedCheckbox = document.createElement('input');
+  const yesDiv = document.createElement('div');
+  const yesLabel = document.createElement('label');
+  const yesCheckbox = document.createElement('input');
+  const noDiv = document.createElement('div');
+  const noLabel = document.createElement('label');
+  const noCheckbox = document.createElement('input');
   let inviteeNameList = [];
 
   //function to create new list items replete w/ invitee name, cofirmed checkbox, and edit/remove buttons
@@ -37,23 +45,41 @@ document.addEventListener('DOMContentLoaded', () => {
     return li;
   }
 
-  //Fill out and append label and checkbox to the main div
-  filterLabel.textContent = "Hide those who haven't responded.";
-  filterCheckbox.type = 'checkbox';
-  div.appendChild(filterLabel);
-  div.appendChild(filterCheckbox);
-  mainDiv.insertBefore(div, ul);
+//CODE CLEANING: Note the repetition in the three code chunks below. Perhaps a function is in order
 
-  //Make the filterLabel and filterCheckbox do what they say they'll do
-  filterCheckbox.addEventListener('change', (event) => {
+  //And for the yesLabel filter (i.e. filter those who haven't responded or aren't attending)
+  yesLabel.textContent = "Attending";
+  yesCheckbox.type = 'checkbox';
+  yesDiv.appendChild(yesCheckbox);
+  yesDiv.appendChild(yesLabel);
+  filterDiv.appendChild(yesDiv);
+
+  //And for the noLabel filter (i.e. filter those who haven't responded or are attending)
+  noLabel.textContent = "Not Attending";
+  noCheckbox.type = 'checkbox';
+  noDiv.appendChild(noCheckbox);
+  noDiv.appendChild(noLabel);
+  filterDiv.appendChild(noDiv);
+
+  //Fill out and append label and checkbox to the main div for responded/not filter
+  respondedLabel.textContent = "Has Responded";
+  respondedCheckbox.type = 'checkbox';
+  respondedDiv.appendChild(respondedCheckbox);
+  respondedDiv.appendChild(respondedLabel);
+  filterDiv.appendChild(respondedDiv);
+
+  mainDiv.insertBefore(filterDiv, ul);
+
+  //Make the respondedLabel and respondedCheckbox do what they say they'll do
+  respondedCheckbox.addEventListener('change', (event) => {
     const checkbox = event.target;
     const checked = checkbox.checked;
     const lis = ul.children;
-    //when filterCheckbox is checked loop through all lis and check is checkbox is checked. display if checked, display=none if unchecked. When it is unchecked, set all lis to display=''.
+    //when respondedCheckbox is checked loop through all lis and check is checkbox is checked. display if checked, display=none if unchecked. When it is unchecked, set all lis to display=''.
     if (checked) {
       for (i = 0 ; i < lis.length ; i++) {
         let li = lis[i];
-        if (li.className === 'responded') {
+        if (li.className.indexOf('responded') > -1) {
           li.style.display = '';
         } else {
           li.style.display = 'none';
@@ -67,7 +93,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  //The code in the event listener below can be cleaned. Note the repetition of input.value = ... and input.placeholder = ...
+  //Make the yesLabel and yesCheckbox do what they say they'll do
+  yesCheckbox.addEventListener('change', (event) => {
+    const checkbox = event.target;
+    const checked = checkbox.checked;
+    const lis = ul.children;
+    //when respondedCheckbox is checked loop through all lis and check is checkbox is checked. display if checked, display=none if unchecked. When it is unchecked, set all lis to display=''.
+    if (checked) {
+      for (i = 0 ; i < lis.length ; i++) {
+        let li = lis[i];
+        if (li.className.indexOf('attending') > -1) {
+          li.style.display = '';
+        } else {
+          li.style.display = 'none';
+        }
+      }
+    } else {
+      for (i = 0 ; i < lis.length ; i++) {
+        let li = lis[i];
+        li.style.display = '';
+      }
+    }
+  });
+
+  //Make the respondedLabel and respondedCheckbox do what they say they'll do
+  noCheckbox.addEventListener('change', (event) => {
+    const checkbox = event.target;
+    const checked = checkbox.checked;
+    const lis = ul.children;
+    //when respondedCheckbox is checked loop through all lis and check is checkbox is checked. display if checked, display=none if unchecked. When it is unchecked, set all lis to display=''.
+    if (checked) {
+      for (i = 0 ; i < lis.length ; i++) {
+        let li = lis[i];
+        if (li.className.indexOf('notComing') > -1) {
+          li.style.display = '';
+        } else {
+          li.style.display = 'none';
+        }
+      }
+    } else {
+      for (i = 0 ; i < lis.length ; i++) {
+        let li = lis[i];
+        li.style.display = '';
+      }
+    }
+  });
 
   //use submit listener on form element instead of click on input so click or enter fires event
   form.addEventListener('submit', (event) => {
@@ -82,6 +152,9 @@ document.addEventListener('DOMContentLoaded', () => {
           isDuplicate = true;
         }
       }
+
+//CODE CLEANING: Note the repetition of input.value = ... and input.placeholder = ...
+
       if (isDuplicate === true) {
         input.value = '';
         input.placeholder = "Hey, they're already on the list! Try again?";
@@ -102,16 +175,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  //make the 'confirmed' checkbox do what it says it'll do
+  //make the 'attending' and 'not attending' checkboxes do what it says they'll do
   ul.addEventListener('change', (event) => {
     const checkbox = event.target;
     const checked = checkbox.checked;
+    const label = checkbox.parentNode;
     const listItem = checkbox.parentNode.parentNode;
     //toggle 'responded' class name based on state of checkbox
-    if (checked) {
-      listItem.className = 'responded';
+    if (checked && label.textContent === 'Attending') {
+      listItem.className = 'responded attending';
+      } else if (checked && label.textContent === 'Not Attending') {
+        listItem.className = 'responded notComing';
     } else {
-        listItem.className = '';
+      listItem.className = '';
       }
   });
 
