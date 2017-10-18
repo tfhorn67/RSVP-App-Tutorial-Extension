@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterLabel = document.createElement('label');
   const filterCheckbox = document.createElement('input');
   let inviteeNameList = [];
-  let isDuplicate = false;
 
   //function to create new list items replete w/ invitee name, cofirmed checkbox, and edit/remove buttons
   function createLI(text) {
@@ -29,7 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const li = document.createElement('li');
     appendToLI('span', 'textContent', text)
       .className = 'name';
-    appendToLI('label', 'textContent', 'Confirmed')
+    appendToLI('label', 'textContent', 'Attending')
+      .appendChild(createElement('input', 'type', 'checkbox'));
+    appendToLI('label', 'textContent', 'Not Attending')
       .appendChild(createElement('input', 'type', 'checkbox'));
     appendToLI('button', 'textContent', 'Edit');
     appendToLI('button', 'textContent', 'Remove');
@@ -74,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (input.value !== '') {
       //store the input value
       const text = input.value;
+      let isDuplicate = false;
       //check if inputted name is already on the list
       for (i = 0 ; i < inviteeNameList.length ; i++) {
         if (text === inviteeNameList[i]) {
@@ -83,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isDuplicate === true) {
         input.value = '';
         input.placeholder = "Hey, they're already on the list! Try again?";
-        isDuplicate = false;
+        //reset isDuplicate to false so the event handler plays nice next time a name is submitted
       } else {
         //add new name to the duplicate checker list
         inviteeNameList.push(text);
