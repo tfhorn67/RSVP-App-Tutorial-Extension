@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const div = document.createElement('div');
   const filterLabel = document.createElement('label');
   const filterCheckbox = document.createElement('input');
+  let inviteeNameList = '';
+  let isDuplicate;
 
   //function to create new list items replete w/ invitee name, cofirmed checkbox, and edit/remove buttons
   function createLI(text) {
@@ -46,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkbox = event.target;
     const checked = checkbox.checked;
     const lis = ul.children;
+    //when filterCheckbox is checked loop through all lis and check is checkbox is checked. display if checked, display=none if unchecked. When it is unchecked, set all lis to display=''.
     if (checked) {
       for (i = 0 ; i < lis.length ; i++) {
         let li = lis[i];
@@ -65,21 +68,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //use submit listener on form element instead of click on input so click or enter fires event
   form.addEventListener('submit', (event) => {
-    //prevent default so page won't refresh on submit
     event.preventDefault();
     if (input.value !== '') {
       //store the input value and clear the field after submitted
       const text = input.value;
-      input.value = '';
-      input.placeholder = 'Invite Someone';
-      //populate the unordered list to hold the invitees
-      const li = createLI(text);
-      ul.appendChild(li);
+      isDuplicate = inviteeNameList.indexOf(text);
+      if (isDuplicate !== -1) {
+        input.value = '';
+        input.placeholder = "Hey, they're already on the list! Try again?";
+      } else {
+        //add new name to the duplicate checker list
+        inviteeNameList += text;
+        //store the input value and clear the field after submitted
+        input.value = '';
+        input.placeholder = 'Invite Someone';
+        //populate the unordered list to hold the new invitee
+        const li = createLI(text);
+        ul.appendChild(li);
+      }
     } else if (input.value === '') {
       input.placeholder = "Oh no! There was nothing to enter. Try again?";
     }
+    console.log(inviteeNameList);
+    console.log(isDuplicate);
   });
 
+  //make the 'confirmed' checkbox do what it says it'll do
   ul.addEventListener('change', (event) => {
     const checkbox = event.target;
     const checked = checkbox.checked;
@@ -92,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   });
 
+  //make the buttons on the lis do what they say they'll do
   ul.addEventListener('click', (event) => {
     //handle button clicks
     if (event.target.tagName === 'BUTTON') {
@@ -100,9 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const ul = li.parentNode;
       const action = button.textContent;
       const nameActions = {
+        //function to handle 'remove' button clicks
         Remove: () => {
           ul.removeChild(li);
         },
+        //function to handle 'edit' button clicks
         Edit: () => {
           const span = li.querySelector('.name');
           const input = document.createElement('input');
@@ -113,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
           li.removeChild(span);
           button.textContent = 'Save';
         },
+        //function to handle 'save' button clicks
         Save: () => {
           const input = li.querySelector('.edit')
           const span = document.createElement('span')
