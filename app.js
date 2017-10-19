@@ -2,8 +2,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('registrar');
   const input = form.querySelector('input');
   const mainDiv = document.querySelector('.main');
+  const filterHTMLElements = {
+    ContainerDiv : filterConDiv = document.createElement('div'),
+    AttendingFilter : (
+      attendingDiv = document.createElement('div'),
+      attendingLabel = document.createElement('label'),
+      attendingCheckbox = document.createElement('input')
+    ),
+    NoShowFilter : (
+      noShowDiv = document.createElement('div'),
+      noShowLabel = document.createElement('label'),
+      noShowCheckbox = document.createElement('input')
+    ),
+    HasRespondedFilter : (
+      respondedDiv = document.createElement('div'),
+      respondedLabel = document.createElement('label'),
+      respondedCheckbox = document.createElement('input')
+    )
+  };
   const ul = document.getElementById('invitedList');
-  const filterDiv = document.createElement('div');
   let inviteeNameList = [];
 
   //function to create and append div, label and checkbox for new filters
@@ -12,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkboxName.type = 'checkbox';
     divName.appendChild(checkboxName);
     divName.appendChild(labelName);
-    filterDiv.appendChild(divName);
+    filterConDiv.appendChild(divName);
   }
 
   //function to uncheck other active filters when a new filter is checked
@@ -44,6 +61,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  //function to hide the selected li label when corresponding filter is applied
+  function hideSelectedLabel() {
+    const lis = ul.children;
+    for (i = 0 ; i < lis.length ; i++) {
+      let li = lis[i];
+      let attending = li.firstElementChild.nextElementSibling.firstElementChild;
+      let attendingParent = attending.parentNode;
+      let nextLabel = attendingParent.nextElementSibling;
+      if (attending.checked === true) {
+        attendingParent.style.display = 'none';
+        nextLabel.style.display = '';
+      } else if (nextLabel.firstElementChild.checked === true) {
+        nextLabel.style.display = 'none';
+        attendingParent.style.display = '';
+      }
+    }
+  }
+
+  //function to show all li labels
+  function showAllLabels() {
+    const lis = ul.children;
+    for (i = 0 ; i < lis.length ; i++) {
+      let li = lis[i];
+      let attending = li.firstElementChild.nextElementSibling.firstElementChild;
+      let attendingParent = attending.parentNode;
+      let nextLabel = attendingParent.nextElementSibling;
+      if (attending.checked === true) {
+        attendingParent.style.display = '';
+        nextLabel.style.display = '';
+      } else {
+        nextLabel.style.display = '';
+        attendingParent.style.display = '';
+      }
+    }
+  }
+
   //function to create new list items replete w/ invitee name, cofirmed checkbox, and edit/remove buttons
   function createLI(text) {
     //function to create new elements.
@@ -71,39 +124,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   //Create and append filters to be applied to the list
-  const attendingDiv = document.createElement('div');
-  const attendingLabel = document.createElement('label');
-  const attendingCheckbox = document.createElement('input');
   createFilterDiv(attendingLabel, attendingCheckbox, attendingDiv, 'Attending');
-
-  const noShowDiv = document.createElement('div');
-  const noShowLabel = document.createElement('label');
-  const noShowCheckbox = document.createElement('input');
   createFilterDiv(noShowLabel, noShowCheckbox, noShowDiv, 'Not Attending');
-
-  const respondedDiv = document.createElement('div');
-  const respondedLabel = document.createElement('label');
-  const respondedCheckbox = document.createElement('input');
   createFilterDiv(respondedLabel, respondedCheckbox, respondedDiv, 'Has Responded');
-
-  mainDiv.insertBefore(filterDiv, ul);
+  mainDiv.insertBefore(filterConDiv, ul);
 
   //Make the respondedLabel and respondedCheckbox do what they say they'll do
   respondedCheckbox.addEventListener('change', (event) => {
     uncheckFilters(attendingCheckbox, noShowCheckbox);
     filterAttendees('responded');
+    showAllLabels();
   });
 
   //Make the attendingLabel and attendingCheckbox do what they say they'll do
   attendingCheckbox.addEventListener('change', (event) => {
     uncheckFilters(respondedCheckbox, noShowCheckbox);
     filterAttendees('attending');
+    if (attendingCheckbox.checked === true) {
+      hideSelectedLabel();
+    } else if (attendingCheckbox.checked === false) {
+      showAllLabels();
+    }
   });
 
   //Make the respondedLabel and respondedCheckbox do what they say they'll do
   noShowCheckbox.addEventListener('change', (event) => {
     uncheckFilters(attendingCheckbox, respondedCheckbox);
     filterAttendees('notComing');
+    if (noShowCheckbox.checked === true) {
+      hideSelectedLabel();
+    } else if (noShowCheckbox.checked === false) {
+      showAllLabels();
+    }
   });
 
   //use submit listener on form element instead of click on input so click or enter fires event
@@ -119,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
           isDuplicate = true;
         }
       }
-
       if (isDuplicate === true) {
         input.value = '';
         input.placeholder = "Hey, they're already on the list! Try again?";
