@@ -1,33 +1,58 @@
 document.addEventListener('DOMContentLoaded', () => {
-  //Global Selections
   const form = document.getElementById('registrar');
   const input = form.querySelector('input');
   const mainDiv = document.querySelector('.main');
   const ul = document.getElementById('invitedList');
-
-  //Global Creations
-//CODE CLEANING: As you get around to code cleaning, maybe make a function to make all the filter divs and their content
   const filterDiv = document.createElement('div');
-  const respondedDiv = document.createElement('div');
-  const respondedLabel = document.createElement('label');
-  const respondedCheckbox = document.createElement('input');
-  const yesDiv = document.createElement('div');
-  const yesLabel = document.createElement('label');
-  const yesCheckbox = document.createElement('input');
-  const noDiv = document.createElement('div');
-  const noLabel = document.createElement('label');
-  const noCheckbox = document.createElement('input');
   let inviteeNameList = [];
+
+  //function to create and append div, label and checkbox for new filters
+  function createFilterDiv(labelName, checkboxName, divName, labelText) {
+    labelName.textContent = labelText;
+    checkboxName.type = 'checkbox';
+    divName.appendChild(checkboxName);
+    divName.appendChild(labelName);
+    filterDiv.appendChild(divName);
+  }
+
+  //function to uncheck other active filters when a new filter is checked
+  function uncheckFilters (filter1, filter2) {
+    filter1.checked = false;
+    filter2.checked = false;
+  }
+
+  //function to filter list items based on presence, or lack thereof, of class name when checkbox is toggled
+  function filterAttendees (className) {
+    const checkbox = event.target;
+    const checked = checkbox.checked;
+    const lis = ul.children;
+    //when a filterCheckbox is checked loop through lis and see if corresponding checkbox is checked. toggle display between none and ''
+    if (checked) {
+      for (i = 0 ; i < lis.length ; i++) {
+        let li = lis[i];
+        if (li.className.indexOf(className) > -1) {
+          li.style.display = '';
+        } else {
+          li.style.display = 'none';
+        }
+      }
+    } else {
+      for (i = 0 ; i < lis.length ; i++) {
+        let li = lis[i];
+        li.style.display = '';
+      }
+    }
+  }
 
   //function to create new list items replete w/ invitee name, cofirmed checkbox, and edit/remove buttons
   function createLI(text) {
-    //function to create new elements. Expects the type of element and a property name/value pair as strings e.g. 'span', 'textContent', 'Hey, there.'
+    //function to create new elements.
     function createElement(elementType, propertyName, propertyValue) {
       const element = document.createElement(elementType);
       element[propertyName] = propertyValue;
       return element;
     }
-    //Function to creat and append element to the new li. See createElement() for argument expectations.
+    //Function to create and append element to the new li. See createElement() for argument expectations.
     function appendToLI(elementType, propertyName, propertyValue) {
       const element = createElement(elementType, propertyName, propertyValue);
       li.appendChild(element);
@@ -45,98 +70,40 @@ document.addEventListener('DOMContentLoaded', () => {
     return li;
   }
 
-//CODE CLEANING: Note the repetition in the three code chunks below. Perhaps a function is in order
+  //Create and append filters to be applied to the list
+  const attendingDiv = document.createElement('div');
+  const attendingLabel = document.createElement('label');
+  const attendingCheckbox = document.createElement('input');
+  createFilterDiv(attendingLabel, attendingCheckbox, attendingDiv, 'Attending');
 
-  //And for the yesLabel filter (i.e. filter those who haven't responded or aren't attending)
-  yesLabel.textContent = "Attending";
-  yesCheckbox.type = 'checkbox';
-  yesDiv.appendChild(yesCheckbox);
-  yesDiv.appendChild(yesLabel);
-  filterDiv.appendChild(yesDiv);
+  const noShowDiv = document.createElement('div');
+  const noShowLabel = document.createElement('label');
+  const noShowCheckbox = document.createElement('input');
+  createFilterDiv(noShowLabel, noShowCheckbox, noShowDiv, 'Not Attending');
 
-  //And for the noLabel filter (i.e. filter those who haven't responded or are attending)
-  noLabel.textContent = "Not Attending";
-  noCheckbox.type = 'checkbox';
-  noDiv.appendChild(noCheckbox);
-  noDiv.appendChild(noLabel);
-  filterDiv.appendChild(noDiv);
-
-  //Fill out and append label and checkbox to the main div for responded/not filter
-  respondedLabel.textContent = "Has Responded";
-  respondedCheckbox.type = 'checkbox';
-  respondedDiv.appendChild(respondedCheckbox);
-  respondedDiv.appendChild(respondedLabel);
-  filterDiv.appendChild(respondedDiv);
+  const respondedDiv = document.createElement('div');
+  const respondedLabel = document.createElement('label');
+  const respondedCheckbox = document.createElement('input');
+  createFilterDiv(respondedLabel, respondedCheckbox, respondedDiv, 'Has Responded');
 
   mainDiv.insertBefore(filterDiv, ul);
 
   //Make the respondedLabel and respondedCheckbox do what they say they'll do
   respondedCheckbox.addEventListener('change', (event) => {
-    const checkbox = event.target;
-    const checked = checkbox.checked;
-    const lis = ul.children;
-    //when respondedCheckbox is checked loop through all lis and check is checkbox is checked. display if checked, display=none if unchecked. When it is unchecked, set all lis to display=''.
-    if (checked) {
-      for (i = 0 ; i < lis.length ; i++) {
-        let li = lis[i];
-        if (li.className.indexOf('responded') > -1) {
-          li.style.display = '';
-        } else {
-          li.style.display = 'none';
-        }
-      }
-    } else {
-      for (i = 0 ; i < lis.length ; i++) {
-        let li = lis[i];
-        li.style.display = '';
-      }
-    }
+    uncheckFilters(attendingCheckbox, noShowCheckbox);
+    filterAttendees('responded');
   });
 
-  //Make the yesLabel and yesCheckbox do what they say they'll do
-  yesCheckbox.addEventListener('change', (event) => {
-    const checkbox = event.target;
-    const checked = checkbox.checked;
-    const lis = ul.children;
-    //when respondedCheckbox is checked loop through all lis and check is checkbox is checked. display if checked, display=none if unchecked. When it is unchecked, set all lis to display=''.
-    if (checked) {
-      for (i = 0 ; i < lis.length ; i++) {
-        let li = lis[i];
-        if (li.className.indexOf('attending') > -1) {
-          li.style.display = '';
-        } else {
-          li.style.display = 'none';
-        }
-      }
-    } else {
-      for (i = 0 ; i < lis.length ; i++) {
-        let li = lis[i];
-        li.style.display = '';
-      }
-    }
+  //Make the attendingLabel and attendingCheckbox do what they say they'll do
+  attendingCheckbox.addEventListener('change', (event) => {
+    uncheckFilters(respondedCheckbox, noShowCheckbox);
+    filterAttendees('attending');
   });
 
   //Make the respondedLabel and respondedCheckbox do what they say they'll do
-  noCheckbox.addEventListener('change', (event) => {
-    const checkbox = event.target;
-    const checked = checkbox.checked;
-    const lis = ul.children;
-    //when respondedCheckbox is checked loop through all lis and check is checkbox is checked. display if checked, display=none if unchecked. When it is unchecked, set all lis to display=''.
-    if (checked) {
-      for (i = 0 ; i < lis.length ; i++) {
-        let li = lis[i];
-        if (li.className.indexOf('notComing') > -1) {
-          li.style.display = '';
-        } else {
-          li.style.display = 'none';
-        }
-      }
-    } else {
-      for (i = 0 ; i < lis.length ; i++) {
-        let li = lis[i];
-        li.style.display = '';
-      }
-    }
+  noShowCheckbox.addEventListener('change', (event) => {
+    uncheckFilters(attendingCheckbox, respondedCheckbox);
+    filterAttendees('notComing');
   });
 
   //use submit listener on form element instead of click on input so click or enter fires event
@@ -152,8 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
           isDuplicate = true;
         }
       }
-
-//CODE CLEANING: Note the repetition of input.value = ... and input.placeholder = ...
 
       if (isDuplicate === true) {
         input.value = '';
@@ -175,17 +140,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  //make the 'attending' and 'not attending' checkboxes do what it says they'll do
+  //make the 'attending' and 'not attending' checkboxes do what they say they'll do
   ul.addEventListener('change', (event) => {
     const checkbox = event.target;
     const checked = checkbox.checked;
     const label = checkbox.parentNode;
     const listItem = checkbox.parentNode.parentNode;
-    //toggle 'responded' class name based on state of checkbox
+    //toggle class names based on state of checkbox
     if (checked && label.textContent === 'Attending') {
       listItem.className = 'responded attending';
+      label.nextElementSibling.firstElementChild.checked = false;
       } else if (checked && label.textContent === 'Not Attending') {
         listItem.className = 'responded notComing';
+        label.previousElementSibling.firstElementChild.checked = false;
     } else {
       listItem.className = '';
       }
@@ -217,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         //function to handle 'save' button clicks
         Save: () => {
-          const input = li.querySelector('.edit')
-          const span = document.createElement('span')
+          const input = li.querySelector('.edit');
+          const span = document.createElement('span');
           span.className = 'name';
           span.textContent = input.value;
           li.insertBefore(span, input);
@@ -226,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
           button.textContent = 'Edit';
         }
       };
-      //Since button.textContent will always equal to the key name of one of the nameActions pairs, calling it as below can be used in place of a group of if, else if statements to filter through different button clicks
+      //Since button.textContent will always equal to the key name of one of the nameActions pairs, calling it as below can be used in place of branching to sort different button clicks to appropriate code blocks
       nameActions[action]();
     }
   });
