@@ -175,13 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         //add new name to the duplicate checker list
         inviteeNameList.push(text);
-        //
-        //
-        //
-        //
-        //
-        //
-        //
         //store the input value and clear the field after submitted
         input.value = '';
         input.placeholder = 'Invite Someone';
@@ -220,11 +213,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const button = event.target;
       const li = button.parentNode;
       const ul = li.parentNode;
+      const lis = ul.children;
       const action = button.textContent;
       const nameActions = {
         //function to handle 'remove' button clicks
         Remove: () => {
-          //NEED TO REMOVE NAME FROM inviteeNameList in case user re-adds name later
+          for (i = 0 ; i < lis.length ; i++) {
+            if (li.firstElementChild.textContent === inviteeNameList[i]) {
+              inviteeNameList.splice(i , 1);
+            }
+          }
           ul.removeChild(li);
         },
         //function to handle 'edit' button clicks
