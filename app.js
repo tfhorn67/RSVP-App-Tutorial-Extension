@@ -87,13 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
       let attending = li.firstElementChild.nextElementSibling.firstElementChild;
       let attendingParent = attending.parentNode;
       let nextLabel = attendingParent.nextElementSibling;
-      if (attending.checked === true) {
-        attendingParent.style.display = '';
-        nextLabel.style.display = '';
-      } else {
-        nextLabel.style.display = '';
-        attendingParent.style.display = '';
-      }
+      attendingParent.style.display = '';
+      nextLabel.style.display = '';
     }
   }
 
@@ -118,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
       .appendChild(createElement('input', 'type', 'checkbox'));
     appendToLI('label', 'textContent', 'Not Attending')
       .appendChild(createElement('input', 'type', 'checkbox'));
+    appendToLI('span', 'textContent', 'Notes...')
+      .className = 'notes';
     appendToLI('button', 'textContent', 'Edit');
     appendToLI('button', 'textContent', 'Remove');
     return li;
@@ -178,6 +175,13 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         //add new name to the duplicate checker list
         inviteeNameList.push(text);
+        //
+        //
+        //
+        //
+        //
+        //
+        //
         //store the input value and clear the field after submitted
         input.value = '';
         input.placeholder = 'Invite Someone';
@@ -220,27 +224,41 @@ document.addEventListener('DOMContentLoaded', () => {
       const nameActions = {
         //function to handle 'remove' button clicks
         Remove: () => {
+          //NEED TO REMOVE NAME FROM inviteeNameList in case user re-adds name later
           ul.removeChild(li);
         },
         //function to handle 'edit' button clicks
         Edit: () => {
-          const span = li.querySelector('.name');
-          const input = document.createElement('input');
-          input.className = 'edit';
-          input.type = 'text';
-          input.value = span.textContent;
-          li.insertBefore(input, span);
-          li.removeChild(span);
+          const nameSpan = li.querySelector('.name');
+          const nameInput = document.createElement('input');
+          const noteSpan = li.querySelector('.notes');
+          const noteInput = document.createElement('input');
+          nameInput.className = 'nameEdit';
+          nameInput.type = 'text';
+          noteInput.className = 'noteEdit';
+          noteInput.type = 'text';
+          nameInput.value = nameSpan.textContent;
+          noteInput.value = noteSpan.textContent;
+          li.insertBefore(nameInput, nameSpan);
+          li.insertBefore(noteInput, noteSpan);
+          li.removeChild(nameSpan);
+          li.removeChild(noteSpan);
           button.textContent = 'Save';
         },
         //function to handle 'save' button clicks
         Save: () => {
-          const input = li.querySelector('.edit');
-          const span = document.createElement('span');
-          span.className = 'name';
-          span.textContent = input.value;
-          li.insertBefore(span, input);
-          li.removeChild(input);
+          const nameInput = li.querySelector('.nameEdit');
+          const nameSpan = document.createElement('span');
+          const noteInput = li.querySelector('.noteEdit');
+          const noteSpan = document.createElement('span');
+          nameSpan.className = 'name';
+          nameSpan.textContent = nameInput.value;
+          noteSpan.className = 'notes';
+          noteSpan.textContent = noteInput.value;
+          li.insertBefore(nameSpan, nameInput);
+          li.insertBefore(noteSpan, noteInput);
+          li.removeChild(nameInput);
+          li.removeChild(noteInput);
           button.textContent = 'Edit';
         }
       };

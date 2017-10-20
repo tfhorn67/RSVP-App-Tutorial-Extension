@@ -79,12 +79,21 @@ header input {
   font-size: 1.15em;
   width: 100%;
 }
-li span,
-li input[type=text] {
+
+li span:nth-of-type(1),
+li input[type=text]:nth-of-type(1) {
   color: #707070;
   font-size: 1.3em;
   margin-bottom: .3em;
 }
+
+li span:nth-of-type(2),
+li input[type=text]:nth-of-type(2) {
+  color: #707070;
+  font-size: .9em;
+  margin-bottom: .3em;
+}
+
 li input[type=text] {
   padding: .2em;
   width: 95%;
