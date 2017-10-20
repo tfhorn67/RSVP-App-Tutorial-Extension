@@ -213,16 +213,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const button = event.target;
       const li = button.parentNode;
       const ul = li.parentNode;
-      const lis = ul.children;
+      let lis = ul.children;
       const action = button.textContent;
       const nameActions = {
         //function to handle 'remove' button clicks
         Remove: () => {
-          for (i = 0 ; i < lis.length ; i++) {
-            if (li.firstElementChild.textContent === inviteeNameList[i]) {
+          //Remove the name from inviteeNameList so user could add it back later, if desired
+          for (let i = 0 ; i < lis.length ; i++) {
+            if (inviteeNameList[i] == li.firstElementChild.textContent) {
               inviteeNameList.splice(i , 1);
             }
           }
+          //Remove the thing the user is actually trying to remove
           ul.removeChild(li);
         },
         //function to handle 'edit' button clicks
@@ -231,6 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
           const nameInput = document.createElement('input');
           const noteSpan = li.querySelector('.notes');
           const noteInput = document.createElement('input');
+          for (let i = 0 ; i < lis.length ; i++) {
+            if (inviteeNameList[i] == li.firstElementChild.textContent) {
+              inviteeNameList.splice(i , 1);
+            }
+          }
           nameInput.className = 'nameEdit';
           nameInput.type = 'text';
           noteInput.className = 'noteEdit';
@@ -251,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const noteSpan = document.createElement('span');
           nameSpan.className = 'name';
           nameSpan.textContent = nameInput.value;
+          inviteeNameList.push(nameInput.value);
           noteSpan.className = 'notes';
           noteSpan.textContent = noteInput.value;
           li.insertBefore(nameSpan, nameInput);
