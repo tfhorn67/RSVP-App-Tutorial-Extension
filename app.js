@@ -1,3 +1,16 @@
+//Does your browser even support local storage, man?
+function supportsLocalStorage () {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch(event) {
+    return false;
+  }
+}
+//Hassle the user if their browser doesn't support local storage
+if (!supportsLocalStorage()) {
+  alert("Heeeeeeeeeeeyyyyyyyyyyyyy buddy... It would be really helpful if we could use local storage on your machine. But we can't. So, this app won't work as well for you as it will for other people. Sorry, or whatever, I guess.");
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('registrar');
   const input = form.querySelector('input');
@@ -23,7 +36,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const ul = document.getElementById('invitedList');
   let inviteeNameList = [];
 
-  //function to create and append div, label and checkbox for new filters
+  //Fetch and parse stored invitee names
+  function getInviteeLIS() {
+    let inviteeLIS = localStorage.getItem('inviteeLIS');
+    if (inviteeLIS) {
+      return JSON.parse(inviteeLIS);
+    } else {
+      return [];
+    }
+  }
+
+  //Stringify and add new names to the stored names list
+  function saveInviteeLIS(string) {
+    let inviteeLIS = getInviteeLIS();
+    if (!string || inviteeLIS.indexOf(string) > -1) {
+      return false;
+    }
+    inviteeLIS.push(string);
+    localStorage.setItem('inviteeLIS', JSON.stringify(inviteeLIS));
+    return true;
+  }
+
+  //Find and delete a name from the stored names list, then resave the list with the amended contents
+  function removeInviteeLIS(inviteeName) {
+    const currentStoredNames = getInviteeLIS();
+    for (i = 0 ; i < currentStoredNames.length ; i++) {
+      if (inviteeName === currentStoredNames[i]) {
+        currentStoredNames.splice(i , 1);
+        localStorage.removeItem('inviteeLIS');
+        for (i = 0 ; i < currentStoredNames.length ; i++) {
+          saveInviteeLIS(currentStoredNames[i]);
+        }
+      }
+    }
+  }
+
+  //Create and append div, label and checkbox for new filters
   function createFilterDiv(labelName, checkboxName, divName, labelText) {
     labelName.textContent = labelText;
     checkboxName.type = 'checkbox';
@@ -32,13 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
     filterConDiv.appendChild(divName);
   }
 
-  //function to uncheck other active filters when a new filter is checked
+  //Uncheck other active filters when a new filter is checked
   function uncheckFilters (filter1, filter2) {
     filter1.checked = false;
     filter2.checked = false;
   }
 
-  //function to filter list items based on presence, or lack thereof, of class name when checkbox is toggled
+  //Filter list items based on presence, or lack thereof, of class name when checkbox is toggled
   function filterAttendees (className) {
     const checkbox = event.target;
     const checked = checkbox.checked;
@@ -61,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  //function to hide the selected li label when corresponding filter is applied
+  //Hide the selected li label when corresponding filter is applied
   function hideSelectedLabel() {
     const lis = ul.children;
     for (i = 0 ; i < lis.length ; i++) {
@@ -79,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  //function to show all li labels
+  //Show all li labels
   function showAllLabels() {
     const lis = ul.children;
     for (i = 0 ; i < lis.length ; i++) {
@@ -92,15 +140,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  //function to create new list items replete w/ invitee name, cofirmed checkbox, and edit/remove buttons
+  //Create new list items replete w/ invitee name, cofirmed checkbox, and edit/remove buttons
   function createLI(text) {
-    //function to create new elements.
+    //Create new elements.
     function createElement(elementType, propertyName, propertyValue) {
       const element = document.createElement(elementType);
       element[propertyName] = propertyValue;
       return element;
     }
-    //Function to create and append element to the new li. See createElement() for argument expectations.
+    //Create and append element to the new li. See createElement() for argument expectations.
     function appendToLI(elementType, propertyName, propertyValue) {
       const element = createElement(elementType, propertyName, propertyValue);
       li.appendChild(element);
@@ -144,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  //Make the respondedLabel and respondedCheckbox do what they say they'll do
+  //Make the notAttendingLabel and notAttendingCheckbox do what they say they'll do
   noShowCheckbox.addEventListener('change', (event) => {
     uncheckFilters(attendingCheckbox, respondedCheckbox);
     filterAttendees('notComing');
@@ -154,6 +202,15 @@ document.addEventListener('DOMContentLoaded', () => {
       showAllLabels();
     }
   });
+
+  //Call up local storage and populate the UL with LIs corresponding to the stored names
+  const storedNames = getInviteeLIS();
+  if (storedNames !== '') {
+    for (i = 0 ; i < storedNames.length ; i++) {
+      ul.appendChild(createLI(storedNames[i]));
+    }
+  }
+
 
   //use submit listener on form element instead of click on input so click or enter fires event
   form.addEventListener('submit', (event) => {
@@ -181,6 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
         //populate the unordered list to hold the new invitee
         const li = createLI(text);
         ul.appendChild(li);
+        //localStorage it up
+        saveInviteeLIS(text);
       }
       //get users to try again if they attempt to submit an empty string
     } else if (input.value === '') {
@@ -224,6 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
               inviteeNameList.splice(i , 1);
             }
           }
+          //remove the name from local storage
+          removeInviteeLIS(li.firstElementChild.textContent);
           //Remove the thing the user is actually trying to remove
           ul.removeChild(li);
         },
@@ -268,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
           button.textContent = 'Edit';
         }
       };
-      //Since button.textContent will always equal to the key name of one of the nameActions pairs, calling it as below can be used in place of branching to sort different button clicks to appropriate code blocks
+      //Since button.textContent will always be equal to the key name of one of the nameActions pairs, calling it as below can be used in place of branching to sort different button clicks to appropriate code blocks
       nameActions[action]();
     }
   });
