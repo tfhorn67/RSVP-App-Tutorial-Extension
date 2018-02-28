@@ -10,15 +10,23 @@
 <body>
   <div class="wrapper">
     <header>
-      <h1>RSVP</h1>
-      <p>A Treehouse App</p>
+      <h1>RSVPlease!</h1>
       <form id="registrar">
-        <input type="text" name="name" placeholder="Invite Someone">
+        <input id="addNew" type="text" name="name" placeholder="Invite Someone">
         <button type="submit" name="submit" value="submit">Submit</button>
       </form>
     </header>
 
-    <div class="main">
+    <div id="main">
+      <div>
+        <label>No Response<input id="noResponse" type="checkbox" name="listFilter"></label>
+      </div>
+      <div>
+        <label>Not Attending<input id="notAttending" type="checkbox" name="listFilter"></label>
+      </div>
+      <div>
+        <label>Attending<input id="attending" type="checkbox" name="listFilter"></label>
+      </div>
       <h2>Invitees</h2>
       <ul id="invitedList"></ul>
     </div>

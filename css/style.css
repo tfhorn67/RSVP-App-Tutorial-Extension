@@ -11,7 +11,7 @@ body {
   background: #f8fdf3;
 }
 h1,
-p,
+header p,
 form button {
   color: white;
 }
@@ -25,7 +25,7 @@ h1 {
 h2 {
   margin-top: 0;
 }
-p {
+header p {
   font-size: 1.1em;
   text-shadow: 0 1px 0 rgba(0,0,0, .25);
 }
@@ -59,6 +59,11 @@ ul li {
   border-bottom: solid 2px rgba(88, 183, 205, .2);
   position: relative;
 }
+
+li p {
+  margin: 0;
+}
+
 button {
   cursor: pointer;
 }
@@ -107,6 +112,9 @@ li label {
 li span,
 li input[type=text]:first-child {
   display: block;
+}
+#notes {
+  color: black;
 }
 li button {
   font-size: .78em;
@@ -180,7 +188,7 @@ div > label {
   .wrapper {
     margin: 0;
   }
-  .main {
+  #main {
     padding: 2em 1em .75em;
   }
 }
@@ -191,7 +199,7 @@ div > label {
     padding: 2.5em 1em 1em;
     background-position: 0 -95px;
   }
-  .main > div {
+  #main > div {
     float: right;
     display: inline-block;
     margin-top: 12px;
@@ -216,7 +224,7 @@ div > label {
   .wrapper {
     width: 90%;
   }
-  .main {
+  #main {
     padding: 3.8em 1.5em .75em;
     position: relative;
     z-index: 10;
